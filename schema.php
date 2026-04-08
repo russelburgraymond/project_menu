@@ -11,6 +11,7 @@ function ensure_schema(mysqli $conn): void {
           description TEXT NULL,
           directory VARCHAR(255) NOT NULL,
           category ENUM('In-Progress','Development','Finished') NOT NULL DEFAULT 'Development',
+          sort_order INT UNSIGNED NOT NULL DEFAULT 0,
           is_active TINYINT(1) NOT NULL DEFAULT 1,
           created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -27,6 +28,7 @@ function ensure_schema(mysqli $conn): void {
         "description"  => "ALTER TABLE projects ADD COLUMN description TEXT NULL",
         "directory"    => "ALTER TABLE projects ADD COLUMN directory VARCHAR(255) NOT NULL",
         "category"     => "ALTER TABLE projects ADD COLUMN category ENUM('In-Progress','Development','Finished') NOT NULL DEFAULT 'Development'",
+        "sort_order"   => "ALTER TABLE projects ADD COLUMN sort_order INT UNSIGNED NOT NULL DEFAULT 0",
         "is_active"    => "ALTER TABLE projects ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1",
         "created_at"   => "ALTER TABLE projects ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
         "updated_at"   => "ALTER TABLE projects ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
@@ -59,4 +61,13 @@ function ensure_schema(mysqli $conn): void {
     if (!isset($indexes["idx_active"])) {
         $conn->query("ALTER TABLE projects ADD KEY idx_active (is_active)");
     }
+
+    $conn->query("SET @in_progress_sort := 0");
+    $conn->query("UPDATE projects SET sort_order = (@in_progress_sort := @in_progress_sort + 1) WHERE category = 'In-Progress' AND (sort_order IS NULL OR sort_order = 0) ORDER BY project_name, id");
+
+    $conn->query("SET @development_sort := 0");
+    $conn->query("UPDATE projects SET sort_order = (@development_sort := @development_sort + 1) WHERE category = 'Development' AND (sort_order IS NULL OR sort_order = 0) ORDER BY project_name, id");
+
+    $conn->query("SET @finished_sort := 0");
+    $conn->query("UPDATE projects SET sort_order = (@finished_sort := @finished_sort + 1) WHERE category = 'Finished' AND (sort_order IS NULL OR sort_order = 0) ORDER BY project_name, id");
 }

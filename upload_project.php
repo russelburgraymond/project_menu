@@ -140,17 +140,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                                 $check->execute();
 
                                                 if ($check->get_result()->num_rows === 0) {
+                                                    $sortOrder = next_sort_order($conn, $info["category"]);
                                                     $stmt = $conn->prepare("
-                                                        INSERT INTO projects (project_name, version, description, directory, category)
-                                                        VALUES (?, ?, ?, ?, ?)
+                                                        INSERT INTO projects (project_name, version, description, directory, category, sort_order)
+                                                        VALUES (?, ?, ?, ?, ?, ?)
                                                     ");
                                                     $stmt->bind_param(
-                                                        "sssss",
+                                                        "sssssi",
                                                         $info["project_name"],
                                                         $info["version"],
                                                         $info["description"],
                                                         $folderName,
-                                                        $info["category"]
+                                                        $info["category"],
+                                                        $sortOrder
                                                     );
                                                     $stmt->execute();
                                                 }

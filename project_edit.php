@@ -20,6 +20,14 @@ if (!$project) {
 
 $error = "";
 
+function next_sort_order(mysqli $conn, string $category): int {
+  $stmt = $conn->prepare("SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_sort FROM projects WHERE category = ?");
+  $stmt->bind_param("s", $category);
+  $stmt->execute();
+  $row = $stmt->get_result()->fetch_assoc();
+  return (int)($row["next_sort"] ?? 1);
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $project_name = trim($_POST["project_name"] ?? "");
   $version      = trim($_POST["version"] ?? "");
@@ -32,12 +40,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   } elseif (!in_array($category, $categories, true)) {
     $error = "Invalid category.";
   } else {
+    $sort_order = (int)($project["sort_order"] ?? 0);
+    if ($category !== ($project["category"] ?? "") || $sort_order <= 0) {
+      $sort_order = next_sort_order($conn, $category);
+    }
+
     $stmt = $conn->prepare("
       UPDATE projects
-      SET project_name = ?, version = ?, description = ?, directory = ?, category = ?
+      SET project_name = ?, version = ?, description = ?, directory = ?, category = ?, sort_order = ?
       WHERE id = ?
     ");
-    $stmt->bind_param("sssssi", $project_name, $version, $description, $directory, $category, $id);
+    $stmt->bind_param("sssssii", $project_name, $version, $description, $directory, $category, $sort_order, $id);
 
     try {
       $stmt->execute();

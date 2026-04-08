@@ -9,6 +9,14 @@ $categories = ["In-Progress", "Development", "Finished"];
 $error = "";
 $projectsBase = __DIR__ . DIRECTORY_SEPARATOR . "projects";
 
+function next_sort_order(mysqli $conn, string $category): int {
+    $stmt = $conn->prepare("SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_sort FROM projects WHERE category = ?");
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    return (int)($row["next_sort"] ?? 1);
+}
+
 function write_project_info_file(string $projectsBase, string $directory, array $data, bool $overwrite = false): array {
     $folder = $projectsBase . DIRECTORY_SEPARATOR . $directory;
     if (!is_dir($folder)) {
@@ -52,11 +60,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   } elseif (!in_array($category, $categories, true)) {
     $error = "Invalid category.";
   } else {
+    $sort_order = next_sort_order($conn, $category);
     $stmt = $conn->prepare("
-      INSERT INTO projects (project_name, version, description, directory, category)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO projects (project_name, version, description, directory, category, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?)
     ");
-    $stmt->bind_param("sssss", $project_name, $version, $description, $directory, $category);
+    $stmt->bind_param("sssssi", $project_name, $version, $description, $directory, $category, $sort_order);
 
     try {
       $stmt->execute();
