@@ -1,0 +1,1 @@
+Replace your config.php and db.php with these versions. Also ensure all files include db.php instead of config.php for connection.

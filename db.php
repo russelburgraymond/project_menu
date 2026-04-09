@@ -3,10 +3,9 @@
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-$db_host = "127.0.0.1";
-$db_user = "root";
-$db_pass = "3473";
-$db_name = "000_project_index"; // change if needed
+if (!isset($db_host, $db_user, $db_pass, $db_name)) {
+    throw new RuntimeException('Database variables are missing. Load config.php before db.php.');
+}
 
 // 1) Connect without selecting a database first
 $conn = new mysqli($db_host, $db_user, $db_pass);
@@ -21,5 +20,3 @@ $conn->query("
 
 // 3) Select it
 $conn->select_db($db_name);
-
-?>

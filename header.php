@@ -32,6 +32,13 @@
     .row{display:grid;grid-template-columns:1fr;gap:12px}
     @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
     .actions a{margin-right:8px;white-space:nowrap}
+    .actions{white-space:nowrap}
+    .action-link{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#182235;border:1px solid #24324a;color:#e7eef7;text-decoration:none;font-size:16px;line-height:1;vertical-align:middle}
+    .action-link:hover{background:#1b2a43}
+    .action-link.delete{background:#2a1214;border-color:#5a2428}
+    .action-link.delete:hover{background:#3a171a}
+    .action-link.update{background:#12304a;border-color:#1f5a8a}
+    .action-link.update:hover{background:#154064}
     .small{font-size:12px}
     .dircode{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:#cfe3ff}
     .category-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -43,7 +50,21 @@
     .drag-handle:hover{opacity:1;background:#162131}
     .category-card.is-unlocked .drag-handle{opacity:1;color:#cfe3ff}
     .category-card.is-locked .drag-handle{cursor:not-allowed}
+    .category-card.is-locked .reorder-column,
+    .category-card.is-locked .drag-cell,
+    .category-card.is-locked .drag-handle,
+    .category-card.is-locked .actions-column,
+    .category-card.is-locked .actions-cell{display:none}
+    .category-card.is-unlocked .reorder-column,
+    .category-card.is-unlocked .drag-cell,
+    .category-card.is-unlocked .actions-column,
+    .category-card.is-unlocked .actions-cell{display:table-cell}
+    .category-card.is-unlocked .drag-handle{display:inline-flex}
     .sortable-row.dragging{opacity:.45}
+    .sortable-row[data-launch-url]{cursor:pointer}
+    .sortable-row[data-launch-url]:hover{background:#111826}
+    .category-card.is-unlocked .sortable-row[data-launch-url]{cursor:default}
+    .project-main-cell{position:relative}
     .reorder-status{min-height:18px}
 
     .version-badge{
@@ -87,6 +108,30 @@
       color:#d5dce5;
       border-color:#47515c;
     }
+
+    .changelog-hero{background:linear-gradient(180deg,#101b2d 0%, #0f1622 100%);border-color:#27415f;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+    .stat-pill{display:inline-flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:88px;padding:10px 12px;border-radius:14px;background:#0d1624;border:1px solid #24324a;color:#cfe3ff}
+    .stat-pill strong{font-size:18px;line-height:1.1;color:#ffffff}
+    .stat-pill span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8fa8c6;margin-top:3px}
+    .changelog-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}
+    .changelog-sidebar{position:sticky;top:18px;padding:0;overflow:hidden}
+    .sidebar-title-row{padding:18px 18px 12px 18px;border-bottom:1px solid #1f2a3a}
+    .version-list{display:flex;flex-direction:column;padding:10px}
+    .version-link{display:block;padding:12px 14px;border-radius:14px;text-decoration:none;border:1px solid transparent;color:#dce8f7;transition:background .15s ease,border-color .15s ease,transform .15s ease}
+    .version-link:hover{background:#121d2e;border-color:#27415f;transform:translateX(2px)}
+    .version-link.is-active{background:linear-gradient(180deg,#15304f 0%,#10233a 100%);border-color:#2d5f94;box-shadow:inset 0 0 0 1px rgba(115,168,233,.12)}
+    .version-link-main{display:block;font-weight:700;font-size:15px;color:#ffffff}
+    .version-link-meta{display:block;margin-top:5px;font-size:12px;color:#98aec8}
+    .empty-note{padding:18px;color:#9fb0c6;font-size:14px}
+    .release-header-card{background:linear-gradient(180deg,#10192a 0%, #0f1622 100%);border-color:#27415f}
+    .changelog-section-card{padding:18px}
+    .section-heading-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #1f2a3a;margin-bottom:14px}
+    .release-items{display:grid;gap:12px}
+    .release-item{display:grid;grid-template-columns:14px minmax(0,1fr);gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:#0d1624;border:1px solid #1d2d44}
+    .release-bullet{width:10px;height:10px;border-radius:999px;background:#4b8cd8;margin-top:5px;box-shadow:0 0 0 4px rgba(75,140,216,.12)}
+    .release-copy{line-height:1.7;color:#e7eef7}
+    .empty-state-card{padding:24px}
+    @media(max-width:900px){.changelog-layout{grid-template-columns:1fr}.changelog-sidebar{position:static}}
   </style>
 </head>
 <body>
@@ -96,9 +141,8 @@
 	  <a href="index.php">Home</a>
 	  <a href="project_add.php">Add Project</a>
 	  <a href="upload_project.php">Upload Project</a>
-      <a href="changelog.php">Changelog</a>
-	  <a href="debug_scan.php">Debug Scan</a>
-	  <a href="install_schema.php">Install/Repair Schema</a>
+      <a href="wiki.php">Wiki</a>
+      <a href="admin.php">Admin</a>
 	</div>
   </div>
   <div class="wrap">
