@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.10.0] - 2026-04-09
+## [3.11.0] - 2026-04-10
 
 ### Added
 - Branch system with parent/child relationships and selection dialog
@@ -10,11 +10,12 @@
 - Admin menu system for tools and maintenance
 - Database-driven changelog viewer
 - Missing project detection with cleanup options
+- Unhomed Branches handling
 
 ### Changed
-- All ongoing development entries moved from Unreleased into this release
 - Improved UI for project list including branch indicators and red highlighting for missing projects
 - Standardized database configuration (config.php + db.php separation)
+- Changelog system updated to use Unreleased workflow
 
 ### Fixed
 - Upload and edit redirect issues
@@ -23,4 +24,4 @@
 
 ## [Unreleased]
 
-- (Future changes will appear here)
+- (New development will appear here)

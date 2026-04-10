@@ -183,9 +183,12 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $branchesByParent = [];
+$unhomedBranches = [];
 
 while ($p = $result->fetch_assoc()) {
-    if (!empty($p['is_branch']) && !empty($p['parent_project_id'])) {
+    $hasValidParent = !empty($p['parent_project_id']) && !empty($p['parent_project_name']);
+
+    if (!empty($p['is_branch']) && $hasValidParent) {
         $branchesByParent[(int)$p['parent_project_id']][] = [
             'id' => (int)$p['id'],
             'project_name' => (string)$p['project_name'],
@@ -194,6 +197,11 @@ while ($p = $result->fetch_assoc()) {
             'directory' => (string)$p['directory'],
             'is_missing_on_disk' => isset($missingOnDiskLookup[$p['directory']]),
         ];
+        continue;
+    }
+
+    if (!empty($p['is_branch'])) {
+        $unhomedBranches[] = $p;
         continue;
     }
 
@@ -457,6 +465,92 @@ foreach ($projectsByCat as $list) {
     </div>
   <?php endif; ?>
 <?php endforeach; ?>
+
+<?php if (count($unhomedBranches) > 0): ?>
+  <div class="card category-card is-locked" data-category="__unhomed_branches__">
+    <div class="category-head">
+      <div class="category-title-wrap">
+        <h2 style="margin:0;">Unhomed Branches</h2>
+        <button type="button"
+                class="icon-btn js-toggle-reorder"
+                data-locked-icon="🔒"
+                data-unlocked-icon="🔓"
+                aria-label="Unlock project actions for Unhomed Branches"
+                title="Unlock project actions for Unhomed Branches">🔒</button>
+        <span class="pill"><?php echo count($unhomedBranches); ?> branches</span>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="reorder-column" style="width:54px;">Order</th>
+          <th>Project</th>
+          <th class="actions-column" style="width:160px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="js-sortable-body">
+        <?php foreach ($unhomedBranches as $p): ?>
+          <?php
+            $isMissingOnDisk = isset($missingOnDiskLookup[$p['directory']]);
+            $launchUrl = $isMissingOnDisk ? '' : ($PROJECTS_WEB_BASE . '/' . rawurlencode($p['directory']) . '/');
+          ?>
+          <tr class="sortable-row<?php echo $isMissingOnDisk ? ' project-row-missing-on-disk' : ''; ?>"
+              data-project-id="<?php echo (int)$p['id']; ?>"
+              data-project-name="<?php echo htmlspecialchars($p['project_name'], ENT_QUOTES); ?>"
+              data-launch-url="<?php echo htmlspecialchars($launchUrl); ?>"
+              data-has-branches="0"
+              data-branch-options="[]"
+              draggable="false">
+            <td class="drag-cell">
+              <span class="drag-handle" title="Drag to reorder">↕</span>
+            </td>
+            <td>
+              <b><?php echo htmlspecialchars($p['project_name']); ?></b>
+              <?php if (!empty(trim((string)$p['version']))): ?>
+                <span class="version-badge <?php echo version_badge_class($p['version']); ?>">v<?php echo htmlspecialchars($p['version']); ?></span>
+              <?php endif; ?>
+              <?php if ($isMissingOnDisk): ?>
+                <span class="missing-pill">Missing on disk</span>
+              <?php endif; ?>
+              <br>
+              <span class="muted">Missing parent project. Edit this branch to relink it or convert it back into a normal project.</span>
+              <?php if (!empty(trim((string)$p['description']))): ?>
+                <br><span class="muted"><?php echo nl2br(htmlspecialchars($p['description'])); ?></span>
+              <?php endif; ?>
+            </td>
+            <td class="actions actions-cell">
+              <a class="action-link edit"
+                 href="project_edit.php?id=<?php echo (int)$p['id']; ?>"
+                 title="Edit project"
+                 aria-label="Edit project">✏️</a>
+              <?php if ($isMissingOnDisk): ?>
+                <a class="action-link delete js-delete-missing-project"
+                   href="delete_missing_project.php?id=<?php echo (int)$p['id']; ?>"
+                   data-project-id="<?php echo (int)$p['id']; ?>"
+                   data-project-name="<?php echo htmlspecialchars($p['project_name'], ENT_QUOTES); ?>"
+                   title="Delete missing project entry"
+                   aria-label="Delete missing project entry">🗑️</a>
+              <?php else: ?>
+                <a class="action-link delete js-delete-project"
+                   href="project_delete.php?id=<?php echo (int)$p['id']; ?>"
+                   data-project-id="<?php echo (int)$p['id']; ?>"
+                   data-project-name="<?php echo htmlspecialchars($p['project_name'], ENT_QUOTES); ?>"
+                   title="Delete project"
+                   aria-label="Delete project">🗑️</a>
+                <a class="action-link update"
+                   href="update_project.php?id=<?php echo (int)$p['id']; ?>"
+                   title="Update from project_info.json"
+                   aria-label="Update from project_info.json"
+                   onclick="return confirm('Update this project from its project_info.json file?');">🔄</a>
+              <?php endif; ?>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+<?php endif; ?>
 
 <div id="branch-modal-backdrop" class="branch-modal-backdrop" aria-hidden="true">
   <div class="branch-modal" role="dialog" aria-modal="true" aria-labelledby="branch-modal-title">

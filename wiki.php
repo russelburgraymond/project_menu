@@ -267,3 +267,6 @@ require_once __DIR__ . "/header.php";
 </div>
 
 <?php require_once __DIR__ . "/footer.php"; ?>
+
+<!-- Unhomed Branches note -->
+<p>If a branch loses its parent project, it appears under <strong>Unhomed Branches</strong> on the Home page until you relink it or delete it.</p>

@@ -88,6 +88,14 @@ if (!delete_project_directory($directoryName)) {
     redirect_with_message("Unable to delete the project directory. The database entry was not removed.", "error");
 }
 
+$orphanStmt = $conn->prepare("UPDATE projects SET parent_project_id = NULL WHERE parent_project_id = ? AND is_branch = 1");
+if (!$orphanStmt) {
+    redirect_with_message("Project directory was deleted, but branch links could not be updated safely. The database entry was not removed.", "error");
+}
+$orphanStmt->bind_param("i", $id);
+$orphanStmt->execute();
+$orphanStmt->close();
+
 $deleteStmt = $conn->prepare("DELETE FROM projects WHERE id = ?");
 if (!$deleteStmt) {
     redirect_with_message("Project directory was deleted, but the database entry could not be removed.", "error");
@@ -96,4 +104,4 @@ $deleteStmt->bind_param("i", $id);
 $deleteStmt->execute();
 $deleteStmt->close();
 
-redirect_with_message('Project "' . $projectName . '" was deleted along with its project directory.');
+redirect_with_message('Project "' . $projectName . '" was deleted. Any linked branches were moved into Unhomed Branches.');
