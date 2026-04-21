@@ -21,6 +21,29 @@ It acts like a **launcher + manager** for everything you build.
 
 ---
 
+## Screenshots
+
+### Uploading Zipped projects
+![Zipped Add](Screenshots/Screenshot2026-04-21075019.png)
+
+### Manual Adding
+![Manual Add](Screenshots/Screenshot2026-04-21075015.png)
+
+### Settings
+![Settings](Screenshots/Screenshot2026-04-21075010.png)
+
+### Project List
+![Project Editing List](Screenshots/Screenshot2026-04-21075002.png)
+![Project List](Screenshots/Screenshot2026-04-21074948.png)
+
+### Project Branch Selection
+![Project/Branch selection](Screenshots/Screenshot2026-04-21074956.png)
+
+### Project Branch Selection
+![Project/Branch selection](Screenshots/Screenshot2026-04-21074956.png)
+
+---
+
 ## ⚡ Key Features
 
 ### 📂 Automatic Project Detection
