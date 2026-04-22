@@ -1,116 +1,182 @@
-# Project Menu (Local Project Index Manager)
+# Project Menu
 
-A lightweight PHP + MySQL application that automatically indexes and organizes your local development projects into a clean, categorized dashboard.
+<p align="center">
+  <strong>A centralized project launcher, manager, and admin system for PHP-based applications.</strong>
+</p>
 
-Designed for local environments (Laragon, UniServer, XAMPP, etc.), this tool scans your `/projects` directory and keeps your project list in sync with your filesystem — while allowing full control over organization, sorting, and metadata.
+<p align="center">
+  Manage, organize, launch, and maintain multiple local web projects from a single interface.
+</p>
 
----
-
-## 🚀 What This Is
-
-**Project Menu** is a central hub for all your local projects.
-
-Instead of digging through folders, you get:
-- A clean UI listing all projects
-- Categories (In Progress, Development, Finished, etc.)
-- Version tracking
-- Descriptions
-- Quick access links
-
-It acts like a **launcher + manager** for everything you build.
+<p align="center">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white">
+  <img alt="MySQL" src="https://img.shields.io/badge/MySQL%20%2F%20MariaDB-supported-00758F?logo=mysql&logoColor=white">
+  <img alt="Status" src="https://img.shields.io/badge/status-active-success">
+</p>
 
 ---
 
-## Screenshots
+## 🚀 What is Project Menu?
 
-### Uploading Zipped projects
-![Zipped Add](Screenshots/Screenshot2026-04-21075019.png)
+Project Menu is your **control center for local PHP projects**.
 
-### Manual Adding
-![Manual Add](Screenshots/Screenshot2026-04-21075015.png)
+Instead of digging through folders, remembering URLs, or managing multiple environments manually, Project Menu gives you:
 
-### Settings
-![Settings](Screenshots/Screenshot2026-04-21075010.png)
+- a clean dashboard of all your projects
+- categorized organization
+- version tracking
+- branch support
+- ZIP import system
+- admin tools for maintenance and recovery
 
-### Project List
-![Project Editing List](Screenshots/Screenshot2026-04-21075002.png)
-![Project List](Screenshots/Screenshot2026-04-21074948.png)
-
-### Project Branch Selection
-![Project/Branch selection](Screenshots/Screenshot2026-04-21074956.png)
-
-### Project Branch Selection
-![Project/Branch selection](Screenshots/Screenshot2026-04-21074956.png)
+It’s built specifically for developers managing **multiple local apps** and wanting a clean, structured way to access and maintain them.
 
 ---
 
-## ⚡ Key Features
+## ✨ Core Features
 
-### 📂 Automatic Project Detection
-- Scans your `/projects` directory
-- Detects new folders automatically
-- Prompts you to add them if not already tracked
+### 📦 Project Launcher
+- Launch any project with a single click
+- Organized into categories
+- Displays version, description, and branch info
 
-### 🧠 Smart Auto-Import (project_info.json)
-All your projects can include a `project_info.json` file.
+---
 
-When present, Project Menu will:
-- Automatically read project name
-- Description
+### 🗂️ Category System
+- Default categories:
+  - In-Progress
+  - Development
+  - Finished
+- Create custom categories
+- Drag-and-drop reorder
+- Activate/deactivate categories
+
+---
+
+### 🌿 Branch Support
+- Link multiple versions of a project together
+- Choose which branch/version to open
+- Keeps main project clean while supporting variations
+
+---
+
+### 📥 ZIP Upload System
+- Upload a full project as a ZIP
+- Automatically extracts and registers it
+- Option to:
+  - assign as branch
+  - generate `project_info.json`
+  - override existing metadata
+
+---
+
+### 🧾 Project Metadata
+Each project stores:
+- Name
 - Version
+- Description
 - Category
-- And more...
-
-➡️ This means **projects auto-add themselves** with zero manual setup.
-
----
-
-### 🏷️ Categories & Organization
-- Assign projects to categories (In Progress, Development, Finished, etc.)
-- Clean grouped display
-- Hide/show empty categories
+- Directory
+- Branch relationship
 
 ---
 
-### 🔒 Drag & Drop Ordering (NEW)
-- Each category has a **lock/unlock toggle**
-- 🔒 Locked = static view  
-- 🔓 Unlocked = drag & drop enabled
-
-Reorder projects visually and save instantly.
-
-Order is:
-- ✅ Stored in the database
-- ✅ Persistent across sessions
-- ✅ Not browser-dependent
+### 🛠️ Admin & Maintenance Tools
+- Install / Repair Schema
+- Debug Scan (directory detection troubleshooting)
+- Category management UI
+- Clean separation of admin tools from main UI
 
 ---
 
-### 📦 Upload Projects (ZIP Support)
-- Upload a `.zip` file directly
-- Automatically extracts into `/projects`
-- If `project_info.json` exists → auto-added instantly
-- If not → prompts manual setup
+### 🔄 Smart Project Detection
+- Scans directories for projects
+- Syncs with database
+- Highlights missing or mismatched projects
 
 ---
 
-### 🧾 Changelog System
-- Built-in changelog tracking
-- Version file support
-- View changes directly inside the app
+## 📸 Screenshots
+
+### Project Dashboard
+![Dashboard](screenshots/categorynotediting.png)
 
 ---
 
-### ⚙️ Database Synced
-- All project data stored in MySQL
-- Includes:
-  - name
-  - description
-  - category
-  - version
-  - directory
-  - sort order
+### Category Editing Mode
+![Category Editing](screenshots/categoryediting.png)
 
 ---
 
-## 📁 Project Structure
+### Branch Selection
+![Branches](screenshots/branches.png)
+
+---
+
+### Add Project
+![Add Project](screenshots/addproject.png)
+
+---
+
+### Upload Project ZIP
+![Upload ZIP](screenshots/addprojectzip.png)
+
+---
+
+### Admin Panel
+![Admin](screenshots/admin.png)
+
+---
+
+## ⚙️ How It Works
+
+### 1. Add or Upload a Project
+- Use **Add Project** for manual entry  
+- Or upload a ZIP with a full project folder  
+
+---
+
+### 2. Organize Projects
+- Assign categories
+- Reorder with drag-and-drop
+- Activate or deactivate categories
+
+---
+
+### 3. Use Branches (Optional)
+- Link variations of a project
+- Select which version to launch
+
+---
+
+### 4. Launch Projects
+Click a project → instantly open it in your environment
+
+---
+
+### 5. Maintain System
+Use Admin tools to:
+- repair schema
+- debug directory scanning
+- manage categories
+
+---
+
+## 🧱 Installation
+
+### Requirements
+- PHP 7.4+
+- MySQL / MariaDB
+- Local server (recommended):
+  - XAMPP
+  - Laragon
+  - UniServer Zero
+
+---
+
+### Setup
+
+1. Place project in your web directory:
+
+```text
+/www/projects/project_menu
