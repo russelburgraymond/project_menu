@@ -194,17 +194,59 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                         $finalDestination = $projectsBase . DIRECTORY_SEPARATOR . $finalFolderName;
                                         if (is_dir($finalDestination)) {
                                             $error = "A project folder with that name already exists.";
-                                        } elseif (!@rename($projectRootToMove, $finalDestination)) {
-                                            $error = "Could not move the extracted project into the projects directory.";
                                         } else {
-                                            $prefill = [
-                                                'directory' => $finalFolderName,
-                                                'project_name' => str_replace('_', ' ', $finalFolderName),
-                                                'version' => '',
-                                                'description' => '',
-                                                'category' => pm_first_active_category($conn),
-                                                'info_error' => '',
-                                            ];
+                                            $movedIntoProjects = @rename($projectRootToMove, $finalDestination);
+
+                                            if (!$movedIntoProjects) {
+                                                if (!is_dir($finalDestination) && !@mkdir($finalDestination, 0777, true)) {
+                                                    $error = "Could not create the destination project folder.";
+                                                } else {
+                                                    $copySuccess = true;
+                                                    $iterator = new RecursiveIteratorIterator(
+                                                        new RecursiveDirectoryIterator($projectRootToMove, RecursiveDirectoryIterator::SKIP_DOTS),
+                                                        RecursiveIteratorIterator::SELF_FIRST
+                                                    );
+
+                                                    foreach ($iterator as $item) {
+                                                        $targetPath = $finalDestination . DIRECTORY_SEPARATOR . $iterator->getSubPathName();
+
+                                                        if ($item->isDir()) {
+                                                            if (!is_dir($targetPath) && !@mkdir($targetPath, 0777, true)) {
+                                                                $copySuccess = false;
+                                                                break;
+                                                            }
+                                                        } else {
+                                                            $targetDir = dirname($targetPath);
+                                                            if (!is_dir($targetDir) && !@mkdir($targetDir, 0777, true)) {
+                                                                $copySuccess = false;
+                                                                break;
+                                                            }
+
+                                                            if (!@copy($item->getPathname(), $targetPath)) {
+                                                                $copySuccess = false;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (!$copySuccess) {
+                                                        remove_tree($finalDestination);
+                                                        $error = "Could not move the extracted project into the projects directory.";
+                                                    } else {
+                                                        remove_tree($projectRootToMove);
+                                                    }
+                                                }
+                                            }
+
+                                            if ($error === '') {
+                                                $prefill = [
+                                                    'directory' => $finalFolderName,
+                                                    'project_name' => str_replace('_', ' ', $finalFolderName),
+                                                    'version' => '',
+                                                    'description' => '',
+                                                    'category' => pm_first_active_category($conn),
+                                                    'info_error' => '',
+                                                ];
 
                                             $infoPath = $finalDestination . DIRECTORY_SEPARATOR . 'project_info.json';
                                             if (is_file($infoPath)) {
@@ -219,6 +261,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                             $_SESSION['upload_details_prefill'] = $prefill;
                                             header('Location: upload_details.php?directory=' . urlencode($finalFolderName));
                                             exit;
+                                            }
                                         }
                                     }
                                 }
